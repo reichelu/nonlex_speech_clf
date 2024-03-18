@@ -1,0 +1,5 @@
+audinterface
+audonnx
+numpy
+pandas
+torch
