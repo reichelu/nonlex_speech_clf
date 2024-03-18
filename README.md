@@ -29,13 +29,13 @@ $ source nls/bin/activate
 ```
 
 * download model from Zenodo
-    * `https://zenodo.org/records/10833104`
-    * model DOI 10.5281/zenodo.10833104
+    * record [URL](https://zenodo.org/records/10833104)
+    * model DOI: `10.5281/zenodo.10833104`
 * and unzip in `model/` folder
 
 ```bash
 $ cd model/
-$ wget TBA
+$ wget https://zenodo.org/records/10833104/files/nonlex_speech_model.zip?download=1 -O nonlex_speech_model.zip
 $ unzip nonlex_speech_model.zip
 $ rm nonlex_speech_model.zip
 ```
@@ -43,6 +43,8 @@ $ rm nonlex_speech_model.zip
 ## Usage
 
 ### Process a signal
+
+* see [example script](https://github.com/reichelu/nonlex_speech_clf/blob/main/scripts/run_NlsClf_process_signal.py)
 
 ```python
 
@@ -58,15 +60,9 @@ y = nls.process_signal(signal, sampling_rate)
 print(y)
 ```
 
-### Process a file
-
-```python
-```
-
 ### Process a DataFrame index
 
-```python
-```
+* see [example script](https://github.com/reichelu/nonlex_speech_clf/blob/main/scripts/run_NlsClf_process_index.py)
 
 
 ## Reference
@@ -84,4 +80,11 @@ Reichel, U.D., Kohári, A., Mády, K. (2023). Acoustics and prediction of non-le
   address =      {Budapest, Hungary}
 }
 ```
+
+## Funding
+
+* ID: NKFIH K-135038
+* Financer institution: Nemzeti Kutatási, Fejlesztési és Innovációs Hivatal
+* [project URL](https://nytud.hu/en/tender/prozodiai-szerkezet-es-mondattipusok-vizsgalata-nagy-beszedadatbazisokon-mely-tanulasi-tamogatassal)
+
 
