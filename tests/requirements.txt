@@ -1,1 +1,7 @@
+audformat
+audinterface
+audonnx
+numpy
+pandas
 pytest
+torch
