@@ -236,7 +236,7 @@ class FormatConverter(object):
             self,
             x: pd.DataFrame,
             tiername: str,
-            columnname: str,
+            columnname: str = "labels",
             tg: dict = None
     ) -> dict:
         
@@ -259,7 +259,7 @@ class FormatConverter(object):
             self,
             x: pd.DataFrame,
             tiername: str,
-            columnname: str,
+            columnname: str = "labels",
             tg: dict = None
     ) -> dict:
 
@@ -619,7 +619,7 @@ class TextGridProc(object):
         if fromScratch and 'xmin' in tier:
             for x in ['xmin', 'xmax']:
                 tg['head'][x] = tier[x]
-
+                
         return tg
 
 
@@ -735,9 +735,9 @@ class TextGridProc(object):
     
         Args:
             t: (dict) tg tier (by self.tier())
-            opt: (dict)
-               skip <""> regular expression for labels of items to be skipped
-               if empty, only empty items will be skipped
+            opt: (dict) with keys
+               "skip": list of labels to be skipped 
+               "skip_empty": boolean, if True, empty strings will be skippes
     
         Returns:
             x: (np.array) 1- or 2-dim array of time stamps
@@ -747,20 +747,15 @@ class TextGridProc(object):
             empty intervals are skipped
         """
 
-        opt = opt_default(opt, {"skip": ""})
-        if len(opt["skip"]) > 0:
-            do_skip = True
-        else:
-            do_skip = False
-
+        opt = opt_default(opt, {"skip": [], "skip_empty": True})
         x, lab = [], []
     
         if 'intervals' in t:
             for i in sorted(t['intervals'].keys()):
                 z = t['intervals'][i]
-                if len(z['text']) == 0:
+                if opt["skip_empty"] and len(z['text']) == 0:
                     continue
-                if do_skip and re.search(opt["skip"], z["text"]):
+                if z["text"] in opt["skip"]:
                     continue
 
                 x.append([z['xmin'], z['xmax']])
