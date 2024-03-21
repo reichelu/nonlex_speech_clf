@@ -4,7 +4,10 @@ import numpy as np
 import pandas as pd
 import torch
 from typing import Union
-import nonlex_speech_clf.core.nls_utils
+from nonlex_speech_clf.core.nls_utils import(
+    logits2probs,
+    logits2labels
+)
 import os
 
 class NlsClf(object):
@@ -50,7 +53,7 @@ class NlsClf(object):
             return_type:
                 "logits": dataframe with logits for classes cg and fp
                 "probabilities": dataframe with probs for cg and fp
-                "classes": dataframe with single column "ans" and
+                "labels": dataframe with single column "labels" and
                     values "cg" and "fp"
 
         Returns:
@@ -95,7 +98,8 @@ class NlsClf(object):
                       index: Union[pd.Index, pd.MultiIndex],
                       channel: int = 0,
                       num_jobs: int = 3,
-                      return_type: str = "logits") -> pd.DataFrame:
+                      return_type: str = "logits",
+                      cache_path: str = None) -> pd.DataFrame:
 
         r""" processes index in audformat
 
@@ -107,16 +111,23 @@ class NlsClf(object):
             return_type:
                 "logits": dataframe with logits for classes cg and fp
                 "probabilities": dataframe with probs for cg and fp
-                "classes": dataframe with single column "ans" and
+                "labels": dataframe with single column "labels" and
                     values "cg" and "fp"
+            cache_path: name of cache file (stores logits)
 
         Returns:
             dataframe with answers
         
         """
 
-        interface = self._init_interface(channel=channel, num_jobs=num_jobs)
-        y = interface.process_index(index)
+        if cache_path and os.path.isfile(cache_path):
+            print(f"reading cached answers from {cache_path} ...")
+            y = pd.read_pickle(cache_path)
+        else:
+            interface = self._init_interface(channel=channel, num_jobs=num_jobs)
+            y = interface.process_index(index, preserve_index=True)
+            if cache_path:
+                y.to_pickle(cache_path)
         return self._return(y, return_type)
 
     
@@ -126,7 +137,9 @@ class NlsClf(object):
             num_jobs: int = 1
     ) -> object:
 
-        """ initialize interface """
+        """ initialize interface
+        ensures that signal is mono and resampled to 16 kHz
+        """
 
         return audinterface.Feature(
             self.model.outputs["logits"].labels,
@@ -134,6 +147,8 @@ class NlsClf(object):
             process_func_args={'outputs': "logits"},
             channels=channel,
             num_workers=num_jobs,
+            sampling_rate=16000,
+            resample=True,
             verbose=True
         )
         
@@ -150,5 +165,5 @@ class NlsClf(object):
         if return_type == "probabilities":
             return logits2probs(y)
         
-        return logits2class(y)
+        return logits2labels(y)
         
