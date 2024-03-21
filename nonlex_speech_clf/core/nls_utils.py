@@ -182,13 +182,13 @@ class FormatConverter(object):
         starts, ends = None, None
         if audformat.is_segmented_index(index):    
             starts = index.get_level_values("start").total_seconds().to_numpy()
-            ends = index.get_level_values("start").total_seconds().to_numpy()
+            ends = index.get_level_values("end").total_seconds().to_numpy()
         x.reset_index(inplace=True)
         x["file"] = files
         if starts is not None:
             x["start"] = starts
             x["end"] = ends
-
+            
         return x
 
     def textgrid_to_table(

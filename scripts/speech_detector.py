@@ -31,13 +31,13 @@ class SpeechDetector():
         }
 
         
-    def process_signal(self, y, sr, onset=0.0):
+    def process_signal(self, y, sr, onset=0):
 
         '''
         Args:
         y: (np.array) signal
         sr: (int) sampling rate
-        onset: (float) time onset to be added to chunk time stamps
+        onset: (float) index onset to be added to chunk time stamps
         Returns:
         tc: (np.array) [[start, end], ...] in sec
         '''
@@ -61,7 +61,7 @@ def pau_detector(s, opt={}):
     Args:
       s - mono signal
       opt['fs']  - sample frequency
-         ['ons'] - idx onset <0> (to be added to time output)
+         ['ons'] - index onset <0> (to be added to time output)
          ['flt']['f']     - filter options, boundary frequencies in Hz
                             (2 values for btype 'band', else 1): <8000> (evtl. lowered by fu_filt())
                 ['btype'] - <'band'>|'high'|<'low'>
@@ -160,7 +160,7 @@ def pau_detector_sub(y, opt):
     ls = len(y)
 
     # min pause length
-    ml = opt['l']*opt['fs']
+    ml = opt['l'] * opt['fs']
 
     # global rmse and pause threshold
     e_rel = copy.deepcopy(opt['e_rel'])
@@ -176,7 +176,7 @@ def pau_detector_sub(y, opt):
     t_glob = opt['e_rel'] * e_glob
 
     # stepsize
-    sts = max([1, math.floor(0.05*opt['fs'])])
+    sts = max([1, math.floor(0.05 * opt['fs'])])
     
     # energy calculation in analysis and reference windows
     wopt_en = {'win': ml, 'rng': [0, ls]}
@@ -337,8 +337,8 @@ def pau_detector_merge(t, e, opt):
     tm = []
     em = []
     for i in utils.idx_a(len(t)):
-        if ((t[i, 1]-t[i, 0] >= mpl) or
-                (opt['fbnd'] == True and (i == 0 or i == len(t)-1))):
+        if ((t[i, 1] - t[i, 0] >= mpl) or
+                (opt['fbnd'] == True and (i == 0 or i == len(t) - 1))):
             tm.append(list(t[i, :]))
             em.append(e[i])
 

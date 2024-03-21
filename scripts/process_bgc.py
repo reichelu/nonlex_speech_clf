@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import pickle
 import sys
+from tqdm import tqdm
 
 from speech_detector import SpeechDetector
 import utils
@@ -18,7 +19,26 @@ from nonlex_speech_clf import (
     TextGridProc
 )
 
-# $ python process_bgc.py -pa /homes/reichelu/data/bgc_test/sound -pt /homes/reichelu/data/bgc_test/tg_phrase -po /homes/reichelu/data/bgc_test/tg_out -pc /homes/reichelu/data/bgc_test/cache
+
+''' script to segment and label CGs and FPs within pause segments
+of the Budapest Games Corpus (work in progress!). The pause segments
+have been derived before by means of ASR that was treating nonlexical
+speech as pauses.
+
+Additional dependencies:
+scipy
+
+Call:
+$ python process_bgc.py -pa DIR_AUDIO -pt DIR_TEXTGRIDS \
+         -po DIR_OUTPUT -pc DIR_CACHE
+
+Outputs TextGrids with additional tiers NLS1 and NLS2 (one per channel),
+each containing additional segments with labels "cg" and "fp"
+
+Comments:
+To identify CG and FP segments the pause detector of CoPaSul was inverted
+to a chunk detector
+'''
 
 def process_bgc(
         path_audio: str,
@@ -35,13 +55,14 @@ def process_bgc(
     
     # input tiers per channel
     tiers_in = ["SPK1", "SPK2"]
-    # output tiers per channel
+    # output tiers
     tiers = ["NLS1", "NLS2"]
 
     # (1) find speech chunks within pause segments
     data = bgc_chunks(ff_tg, ff_wav, tiers_in, path_cache)
     
     # (2) apply model
+    print("NLS prediction ...")
     nls = NlsClf()
     ans = {}
     for c in [0, 1]:
@@ -69,13 +90,15 @@ def process_bgc(
             ii = np.where(ff == f_wav)[0]
             x = ans[c].iloc[ii]
             tg = fconv.convert(x=x, tg=tg, tiername=t)
-
+            
         # write tg
         fo = os.path.join(path_output, f"{utils.stm(f_tg)}.TextGrid")
         tgp.write(tg, fo)
 
         
-def bgc_chunks(ff_tg: list, ff_wav: list, tiers_in: list, path_cache: str) -> dict:
+def bgc_chunks(
+        ff_tg: list, ff_wav: list, tiers_in: list, path_cache: str
+) -> dict:
 
     r"""finds speech chunks in pause intervals
 
@@ -95,14 +118,15 @@ def bgc_chunks(ff_tg: list, ff_wav: list, tiers_in: list, path_cache: str) -> di
 
     fo = os.path.join(path_cache, "chunks.pkl")
     if os.path.isfile(fo):
+        print(f"reading chached chunks from {fo} ...")
         with open(fo, "rb") as h:
             return pickle.load(h)
     
     #     concat to 2 audformat dataframes, one per channel
     spd_param = {
-        "e_rel": 0.2,
+        "e_rel": 0.5,  # .2
         "l": 0.15,
-        "l_ref": 5,
+        "l_ref": 5,    # 5
         "n": -1,
         "fbnd": 0,
         "min_pau_l": 0.2,
@@ -114,7 +138,8 @@ def bgc_chunks(ff_tg: list, ff_wav: list, tiers_in: list, path_cache: str) -> di
     data = {0: {"file": [], "start": [], "end": [], "labels": []},
             1: {"file": [], "start": [], "end": [], "labels": []}}
     spd = SpeechDetector(**spd_param)
-    for f_tg, f_wav in zip(ff_tg, ff_wav):
+    for j in tqdm(range(len(ff_tg)), desc="chunking"):
+        f_tg, f_wav = ff_tg[j], ff_wav[j]
         sig_stereo, sr = audiofile.read(f_wav)
         tg = tgp.read(f_tg)
         for c, tn in enumerate(tiers_in):
@@ -128,7 +153,7 @@ def bgc_chunks(ff_tg: list, ff_wav: list, tiers_in: list, path_cache: str) -> di
                     continue
                 tt = utils.time2idx(t[i, :], sr)
                 y = sig[tt[0]:tt[1]]
-                tc = spd.process_signal(y, sr, onset=t[i, 0])
+                tc = spd.process_signal(y, sr, onset=tt[0])
                 n = tc.shape[0]
                 if n == 0:
                     continue
