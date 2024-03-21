@@ -84,8 +84,7 @@ Reichel, U.D., Kohári, A., Mády, K. (2023). Acoustics and prediction of non-le
 
 ## Funding
 
-* ID: NKFIH K-135038
-* Financer institution: Nemzeti Kutatási, Fejlesztési és Innovációs Hivatal
-* [project URL](https://nytud.hu/en/tender/prozodiai-szerkezet-es-mondattipusok-vizsgalata-nagy-beszedadatbazisokon-mely-tanulasi-tamogatassal)
-
-
+* Funder: National Research, Development and Innovation Office
+* Project ID: NKFIH K 135038
+* Project title: Prosodic structure and sentence types by using large speech databases supported by deep learning techniques
+* [Project URL](https://nytud.hu/en/tender/prozodiai-szerkezet-es-mondattipusok-vizsgalata-nagy-beszedadatbazisokon-mely-tanulasi-tamogatassal)
