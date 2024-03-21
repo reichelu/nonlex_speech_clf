@@ -91,6 +91,7 @@ def windowing_idx(i: int, s: dict) -> np.array:
     on, off = windowing(i, s)
     return np.arange(on, off, 1)
 
+
 def windowing(i: np.array, o: dict) -> Tuple[int, int]:
 
     '''
@@ -124,3 +125,4 @@ def windowing(i: np.array, o: dict) -> Tuple[int, int]:
             off = min([off + d, rng[1]])
 
     return on, off
+

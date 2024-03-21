@@ -153,7 +153,7 @@ class SpeechDetector():
         
         return t
 
-
+    
 def fu_filt(y, opt):
 
     '''
