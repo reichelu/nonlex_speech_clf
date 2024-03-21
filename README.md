@@ -2,7 +2,7 @@
 
 This project contains code to distinguish communicative grunts from filled pauses.
 
-## Motivation
+## Introduction
 
 Conversation grunts, short non-lexical utterances can be further subdivided into
 * communicative grunts (`cg`), i.e. short non-lexical utterances with communicative intent, and
@@ -12,11 +12,12 @@ This project contains code to distinguish these two classes `cg` and `fp` by app
 
 See [this reference](http://real.mtak.hu/159991/1/beszkut_speechresearch_2023_proceedings.pdf#page=91) for more details on model architecture and evaluation.
 
+The model has been trained on mono signals with a sampling rate of 16 kHz. The interface in this project takes care that the input signal is converted accordingly.
+
 ## Limitations
 
 * the code does not provide speech segmentation, but only classification of pre-segmented speech intervals
 * the currently underlying model was trained on Hungarian data only
-* the model was trained on mono signals with a sampling rate of 16 kHz
 
 ## Installation
 
