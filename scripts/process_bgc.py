@@ -122,28 +122,30 @@ def bgc_chunks(
         with open(fo, "rb") as h:
             return pickle.load(h)
     
-    #     concat to 2 audformat dataframes, one per channel
     spd_param = {
-        "e_rel": 0.5,  # .2
-        "l": 0.15,
-        "l_ref": 5,    # 5
-        "n": -1,
-        "fbnd": 0,
-        "min_pau_l": 0.2,
-        "min_chunk_l": 0.1,
+        "local_ratio": 1.5,
+        "global_ratio": 0.1,
+        "l": 0.1,
+        "l_ref": 0.5,
+        "min_l": 0.1,
         "flt_btype": "low",
         "flt_f": 8000,
         "flt_ord": 5
     }
+
     data = {0: {"file": [], "start": [], "end": [], "labels": []},
             1: {"file": [], "start": [], "end": [], "labels": []}}
+
     spd = SpeechDetector(**spd_param)
+
     for j in tqdm(range(len(ff_tg)), desc="chunking"):
         f_tg, f_wav = ff_tg[j], ff_wav[j]
         sig_stereo, sr = audiofile.read(f_wav)
         tg = tgp.read(f_tg)
         for c, tn in enumerate(tiers_in):
             sig = sig_stereo[c]
+            global_reference = spd.get_global_reference(
+                sig, threshold_prct=50)
             tier = tgp.tier(tg, tn)
             t, lab = tgp.tier2table(tier, {"skip_empty": False})
             t_chunks = np.array([])
@@ -153,7 +155,12 @@ def bgc_chunks(
                     continue
                 tt = utils.time2idx(t[i, :], sr)
                 y = sig[tt[0]:tt[1]]
-                tc = spd.process_signal(y, sr, onset=tt[0])
+                tc = spd.process_signal(
+                    y,
+                    sr,
+                    global_reference=global_reference,
+                    onset=t[i, 0]
+                )
                 n = tc.shape[0]
                 if n == 0:
                     continue
