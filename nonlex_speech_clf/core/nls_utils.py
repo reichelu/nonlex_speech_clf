@@ -748,6 +748,11 @@ class TextGridProc(object):
         """
 
         opt = opt_default(opt, {"skip": [], "skip_empty": True})
+        if len(opt["skip"]) > 0:
+            do_skip = True
+        else:
+            do_skip = False
+            
         x, lab = [], []
     
         if 'intervals' in t:
