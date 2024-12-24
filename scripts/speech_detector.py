@@ -54,7 +54,11 @@ class SpeechDetector():
         }
 
         
-    def get_global_reference(self, y: np.array, threshold_prct: int = 50) -> float:
+    def get_global_reference(
+            self,
+            y: np.array,
+            threshold_prct: int = 50
+    ) -> float:
 
         r"""
         get energy reference value on longer signal, for cases where later only short
@@ -75,13 +79,19 @@ class SpeechDetector():
         return utils.rmsd(ya[ya > qq[0]])
 
     
-    def process_signal(self, y, sr, global_reference=0.0, onset=0.0):
+    def process_signal(
+            self,
+            y: np.array,
+            sr: int,
+            global_reference: float = 0.0,
+            onset: float = 0.0
+    ) -> np.array:
 
         r"""
         Args:
-            y: (np.array) signal
-            sr: (int) sampling rate
-            global_reference: (float) energy reference times global_ratio
+            y: signal
+            sr: sampling rate
+            global_reference: energy reference times global_ratio
                 to be superseeded
             onset: (float) onset in seconds to be added to chunk time stamps
         
@@ -154,14 +164,14 @@ class SpeechDetector():
         return t
 
     
-def fu_filt(y, opt):
+def fu_filt(y: np.array, opt: dict) -> dict:
 
     '''
     wrapper around Butter filter
     
     Args:
-      y: (np.array) 1-dim vector
-      opt: (dict)
+      y: 1-dim vector
+      opt: filter parameters
         opt['sr'] - sample rate
            ['f']  - scalar (high/low) or 2-element vector (band) of boundary freqs
            ['order'] - order

@@ -74,6 +74,7 @@ class FormatConverter(object):
                 source_format=="textgrid" and target_format=="audformat"
             source_format: if self.source_format should be overwritten
             target_format: if self.target_format should be overwritten
+        
         Returns:
             dataframe or Textgrid dict
 
@@ -272,8 +273,6 @@ class FormatConverter(object):
         
     
 class TextGridProc(object):
-
-    # copy code from ~/github/copasul/copasul/copasul_utily.py
 
     def __init__(self):
 
@@ -969,17 +968,17 @@ def logits2labels(
     return lab
 
 
-def add_subdict(d, s):
+def add_subdict(d: dict, s: str) -> dict:
 
     r"""
     add key to empty subdict if not yet part of dict
     
     Args:
-        d: (dict)
-        s: (key)
+        d: dict
+        s: key
     
     Returns:
-        d: (dict) incl key pointing to empty subdict
+        d: dict incl key pointing to empty subdict
     """
 
     if s not in d:
