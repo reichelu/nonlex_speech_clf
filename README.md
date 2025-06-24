@@ -36,7 +36,7 @@ $ source nls/bin/activate
 
 ```bash
 $ cd model/
-$ wget https://zenodo.org/records/10833104/files/nonlex_speech_model.zip?download=1 -O nonlex_speech_model.zip
+$ wget https://zenodo.org/records/15732732/files/nonlex_speech_model.zip?download=1 -O nonlex_speech_model.zip
 $ unzip nonlex_speech_model.zip
 $ rm nonlex_speech_model.zip
 ```
