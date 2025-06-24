@@ -30,9 +30,10 @@ $ source nls/bin/activate
 ```
 
 * download model from Zenodo
-    * record [URL](https://zenodo.org/records/10833104)
-    * model DOI: `10.5281/zenodo.10833104`
+    * record [URL](https://zenodo.org/records/15732732)
+    * model DOI: `10.5281/zenodo.10833103`
 * and unzip in `model/` folder
+
 
 ```bash
 $ cd model/
@@ -68,7 +69,7 @@ print(y)
 
 ## Reference
 
-If you use this model for your studies please cite:
+If you use this model for your studies please consider citing:
 
 Reichel, U.D., Kohári, A., Mády, K. (2023). Acoustics and prediction of non-lexical speech in the Budapest Games Corpus. In: Proc. Speech Research Conference, [pdf](http://real.mtak.hu/159991/1/beszkut_speechresearch_2023_proceedings.pdf#page=91)
 
